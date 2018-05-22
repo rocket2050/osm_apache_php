@@ -9,14 +9,27 @@
   apt_repository: repo='ppa:ondrej/php'
 
 # Updating cache
-#- name: Update apt cache if repository just added.
-#  apt: update_cache=yes
+- name: Update apt cache if repository just added.
+  apt: update_cache=yes
 
 # Installing PHP
 - name: Install PHP 
   apt: name={{item}} state=installed
   with_items:
     - "php{{php_version}}"
-# Install PHP-FPM
-- name: Install PHP_FPM
-  apt: name="php{{php_version}}-fpm" state=present
+    - "php{{php_version}}-fpm"
+    - "apache2"
+
+# Config php-fpm for apache
+- name: configure php-fpm
+  template: src=000-default.conf.j2 dest=/etc/apache2/sites-enabled/000-default.conf
+- name: enable apache module
+  shell: a2enmod proxy_fcgi
+  notify:
+    - restart apache2
+
+#  notify:
+#    - restart php{{php_version}}-fpm
+
+- name: enable script for php
+  shell: echo "<?php phpinfo(); ?>" > /var/www/html/info.php

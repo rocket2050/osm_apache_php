@@ -19,3 +19,13 @@
     - php-fpm
     - php 
     - php-devel
+
+# Config php-fpm for apache
+- name: configure php-fpm
+  template: src=php.conf.j2 dest=/etc/httpd/conf.d/php.conf
+  notify:
+    - restart httpd
+    - restart php-fpm
+
+- name: enable script for php
+  shell: echo '<?php phpinfo(); ?>' > /var/www/html/info.php
