@@ -49,3 +49,6 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - { role: osm_apache_php }
 
+Verify
+------
+http://ip/info.php
